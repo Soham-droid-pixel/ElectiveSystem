@@ -1,2 +1,2 @@
 # ElectiveSystem
-ElectiveSystem for College
+ElectiveSystem 
