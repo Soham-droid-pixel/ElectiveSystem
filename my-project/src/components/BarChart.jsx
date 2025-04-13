@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -9,25 +9,35 @@ import {
   Legend,
   ResponsiveContainer
 } from 'recharts';
+import { useAllotment } from '../context/AllotmentContext';
 
-const CourseBarChart = ({ data }) => {
+const CourseBarChart = () => {
+  const { analyticsData } = useAllotment();
+  const [barData, setBarData] = useState([]);
+
   useEffect(() => {
-    console.log("🔍 Bar Chart Data:", data);
-  }, [data]);
+    // Dynamically update barData when analyticsData changes
+    if (analyticsData?.bar) {
+      setBarData(analyticsData.bar);
+    }
+  }, [analyticsData]);
 
-  if (!data || data.length === 0) {
+  if (!barData || barData.length === 0) {
     return <p className="text-center text-gray-500 mt-4">No bar chart data available.</p>;
   }
 
   return (
     <div className="w-full h-[320px] mt-4">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data}>
+        <BarChart data={barData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="course" />
           <YAxis allowDecimals={false} />
           <Tooltip
-            formatter={(value, name) => [`${value} Students`, name === 'first' ? '1st Choice' : name === 'second' ? '2nd Choice' : '3rd Choice']}
+            formatter={(value, name) => [
+              `${value} Students`,
+              name === 'first' ? '1st Choice' : name === 'second' ? '2nd Choice' : '3rd Choice'
+            ]}
           />
           <Legend
             formatter={(value) => {

@@ -1,15 +1,15 @@
+// src/services/api.js
 import axios from 'axios';
 
-// You can change the baseURL based on your deployment (localhost or production)
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api', // Adjust this if your backend runs on another port
-  withCredentials: true, // If you're using cookies for auth
+  baseURL: 'http://localhost:5000/api', // Change in production
+  withCredentials: true,
 });
 
-// Add a request interceptor (Optional: for attaching tokens)
+// Attach token from localStorage if present
 API.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token'); // if you're using token-based auth
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -18,7 +18,16 @@ API.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Export all endpoints
+// (Optional) Global error handler
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Optionally handle 401/403 etc.
+    return Promise.reject(error);
+  }
+);
+
+// API calls
 export const uploadCSV = (formData) => API.post('/upload', formData);
 export const processAllotment = () => API.get('/process');
 export const downloadCSV = () => API.get('/download', { responseType: 'blob' });
@@ -31,3 +40,4 @@ export const loginUser = (credentials) => API.post('/auth/login');
 export const getUserProfile = () => API.get('/auth/profile');
 
 export default API;
+export const logoutUser = () => API.post('/auth/logout'); 

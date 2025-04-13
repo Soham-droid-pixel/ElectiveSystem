@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   PieChart,
   Pie,
@@ -13,7 +13,14 @@ const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042'];
 
 const AllotmentPieChart = () => {
   const { analyticsData } = useAllotment();
-  const pieData = analyticsData?.pie || [];
+  const [pieData, setPieData] = useState([]);
+
+  useEffect(() => {
+    // Dynamically update pieData when analyticsData changes
+    if (analyticsData?.pie) {
+      setPieData(analyticsData.pie);
+    }
+  }, [analyticsData]);
 
   if (!pieData || pieData.length === 0) {
     return <p className="text-center text-gray-500 mt-4">No pie chart data to display.</p>;

@@ -1,67 +1,48 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 export const AllotmentContext = createContext();
 
 export const AllotmentProvider = ({ children }) => {
-  const [allotmentData] = useState([
-    {
-      studentId: 'S101',
-      name: 'Alice',
-      firstChoice: 'AI & ML',
-      secondChoice: 'Web Dev',
-      thirdChoice: 'Cloud',
-      allottedCourse: 'AI & ML',
-      preferenceAllotted: '1st',
-    },
-    {
-      studentId: 'S102',
-      name: 'Bob',
-      firstChoice: 'Web Dev',
-      secondChoice: 'Cloud',
-      thirdChoice: 'AI & ML',
-      allottedCourse: 'Web Dev',
-      preferenceAllotted: '1st',
-    },
-    {
-      studentId: 'S103',
-      name: 'Charlie',
-      firstChoice: 'Cloud',
-      secondChoice: 'AI & ML',
-      thirdChoice: 'Web Dev',
-      allottedCourse: 'AI & ML',
-      preferenceAllotted: '2nd',
-    }
-  ]);
+  const [allotmentData, setAllotmentData] = useState([]);
+  const [analyticsData, setAnalyticsData] = useState({ pie: [], bar: [] });
+  const [loading, setLoading] = useState(true);
 
-  const [analyticsData] = useState({
-    pie: [
-      { label: '1st Preference', value: 2 },
-      { label: '2nd Preference', value: 1 }
-    ],
-    bar: [
-      {
-        course: 'AI & ML',
-        first: 1,
-        second: 1,
-        third: 0
-      },
-      {
-        course: 'Web Dev',
-        first: 1,
-        second: 0,
-        third: 0
-      },
-      {
-        course: 'Cloud',
-        first: 1,
-        second: 0,
-        third: 1
+  // Fetch data from the backend
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const allotmentResponse = await axios.get('/api/allotments'); // Replace with your backend endpoint
+        const analyticsResponse = await axios.get('/api/analytics'); // Replace with your backend endpoint
+
+        setAllotmentData(allotmentResponse.data);
+        setAnalyticsData(analyticsResponse.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
-    ]
-  });
+    };
+
+    fetchData();
+  }, []);
+
+  // Function to update allotment data
+  const updateAllotment = async (updatedData) => {
+    try {
+      const response = await axios.put('/api/allotments', updatedData); // Replace with your backend endpoint
+      setAllotmentData(response.data);
+    } catch (error) {
+      console.error('Error updating allotment data:', error);
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>; // Optional loading state
+  }
 
   return (
-    <AllotmentContext.Provider value={{ allotmentData, analyticsData }}>
+    <AllotmentContext.Provider value={{ allotmentData, analyticsData, updateAllotment }}>
       {children}
     </AllotmentContext.Provider>
   );
