@@ -1,4 +1,5 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 
 const allotmentSchema = mongoose.Schema({
   studentId: { type: String, required: true },
@@ -8,4 +9,5 @@ const allotmentSchema = mongoose.Schema({
 
 const Allotment = mongoose.model('Allotment', allotmentSchema);
 
-export default Allotment;
+module.exports = Allotment;
+dotenv.config();
