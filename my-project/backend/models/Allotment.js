@@ -1,13 +1,15 @@
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
 
-const allotmentSchema = mongoose.Schema({
-  studentId: { type: String, required: true },
-  allottedCourse: { type: String, required: true },
-  preferenceAllotted: { type: String, required: true }, // e.g., "1st", "2nd", "3rd"
-}, { timestamps: true });
+const allotmentSchema = new mongoose.Schema({
+  studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
+  allottedCreditTrack: String,
+  allottedPECL1: String,
+  allottedPECL2: String,
+  allottedOpen: String,
+  mdm: String,
+  honors: String,
+  minors: String,
+  remark: String,
+});
 
-const Allotment = mongoose.model('Allotment', allotmentSchema);
-
-module.exports = Allotment;
-dotenv.config();
+module.exports = mongoose.model('Allotment', allotmentSchema);

@@ -1,12 +1,20 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-const studentSchema = mongoose.Schema({
-  studentId: { type: String, required: true, unique: true },
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  preferences: { type: [String], required: true }, // Array of course preferences
-}, { timestamps: true });
+const studentSchema = new mongoose.Schema({
+  name: String,
+  rollNumber: String,
+  email: String,
+  creditTrack1: String,
+  creditTrack2: String,
+  pecl1_1: String,
+  pecl1_2: String,
+  pecl2_1: String,
+  pecl2_2: String,
+  open1: String,
+  open2: String,
+  honors: String,
+  minors: String,
+  mdm: String,
+});
 
-const Student = mongoose.model('Student', studentSchema);
-
-export default Student;
+module.exports = mongoose.model('Student', studentSchema);

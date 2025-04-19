@@ -1,30 +1,45 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const multer = require('multer');
 const path = require('path');
 const connectDB = require('./config/db');
-const allotmentRoutes = require('./routes/allotmentRoutes');
 
+// Routes
+const allotmentRoutes = require('./routes/allotmentRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
+
+// Load environment variables
 dotenv.config();
+
+// Connect to MongoDB
 connectDB();
 
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-// Static folder for uploaded/downloaded files if needed
+// CORS Configuration
+const corsOptions = {
+  origin: 'http://localhost:5173', // Allow requests only from your frontend
+  credentials: true,              // Allow cookies, Authorization headers, etc.
+};
+app.use(cors(corsOptions));
+
+// Middleware
+app.use(express.json()); // Parse JSON requests
+
+// Serve static files from /uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// API Routes
+// API Endpoints
 app.use('/api/allotments', allotmentRoutes);
+app.use('/api/upload', uploadRoutes);
 
-// Default route
+// Default Route
 app.get('/', (req, res) => {
-  res.send('API is running...');
+  res.send('🚀 Elective Allotment System API is running...');
 });
 
+// Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
